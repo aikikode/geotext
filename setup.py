@@ -12,7 +12,7 @@ readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 requirements = [
-    'Unidecode==0.4.20',
+    'Unidecode==1.0.23',
 ]
 
 test_requirements = [
@@ -21,7 +21,7 @@ test_requirements = [
 
 setup(
     name='geotext',
-    version='0.3.0',
+    version='0.4.0',
     description='Geotext extracts country and city mentions from text',
     long_description=readme + '\n\n' + history,
     author='Denis Kovalev (fork from Yaser Martinez Palenzuela version)',
@@ -39,6 +39,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
     ],
     setup_requires=['pytest-runner', ],
     test_suite='tests',

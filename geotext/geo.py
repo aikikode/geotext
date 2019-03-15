@@ -3,12 +3,9 @@
 import re
 from collections import namedtuple, Counter, OrderedDict
 
-from models.candidate import CandidateDB
-from tasks.db_tasks import (
-    create_country_db, create_state_db, create_city_db, create_nationality_db,
-    create_city_abbreviations_db, create_country_abbreviations_db,
-)
-from text_utils import get_words_counts, replace_non_ascii
+from geotext.models.candidate import CandidateDB
+from geotext.tasks import db_tasks
+from geotext.text_utils import get_words_counts, replace_non_ascii
 
 
 class GeoText(object):
@@ -33,7 +30,7 @@ class GeoText(object):
 
     >>> GeoText().read('New York, Texas, and also China').get_country_mentions()
     OrderedDict([(Country: United States, 2), (Country: China, 1)])
-    """
+    """  # noqa
     LOCATION_REGEX = r"[A-Z]+[a-z]*(?:[ '-][A-Z]+[a-z]*)*"
     GeoDB = namedtuple(
         'GeoDB',
@@ -53,12 +50,14 @@ class GeoText(object):
         """
         Load information from the data directory
         """
-        country_db = create_country_db()
-        state_db = create_state_db(country_db)
-        city_db = create_city_db(state_db, country_db)
-        nationality_db = create_nationality_db(country_db)
-        city_abbreviation_db = create_city_abbreviations_db(city_db)
-        country_abbreviation_db = create_country_abbreviations_db(country_db)
+        country_db = db_tasks.create_country_db()
+        state_db = db_tasks.create_state_db(country_db)
+        city_db = db_tasks.create_city_db(state_db, country_db)
+        nationality_db = db_tasks.create_nationality_db(country_db)
+        city_abbreviation_db = db_tasks.create_city_abbreviations_db(city_db)
+        country_abbreviation_db = db_tasks.create_country_abbreviations_db(
+            country_db
+        )
         self._geodb = GeoText.GeoDB(
             country_db, state_db, city_db, nationality_db,
             city_abbreviation_db, country_abbreviation_db
@@ -145,20 +144,20 @@ class GeoText(object):
                 candidate.text
             )
             if (
-                city_abbrev_match and
-                city_abbrev_match.place.population >= min_population
+                city_abbrev_match
+                and (city_abbrev_match.place.population >= min_population)
             ):
-                    cities.add(city_abbrev_match.place)
-                    candidate.mark_as_location()
-                    continue
+                cities.add(city_abbrev_match.place)
+                candidate.mark_as_location()
+                continue
 
             # 2
             state_match = (
                 self._geodb.state_db.search('US.{}'.format(candidate.text))
             )
             if (
-                state_match and
-                state_match.country.population >= min_population
+                state_match
+                and state_match.country.population >= min_population
             ):
                 states.add(state_match)
                 candidate.mark_as_location()
@@ -166,8 +165,8 @@ class GeoText(object):
 
             # 3
             country_match = (
-                self._geodb.country_db.search(candidate.text) or
-                self._geodb.country_db.search(candidate.text.lower())
+                self._geodb.country_db.search(candidate.text)
+                or self._geodb.country_db.search(candidate.text.lower())
             )
             if country_match and country_match.population >= min_population:
                 countries.add(country_match)
@@ -180,8 +179,8 @@ class GeoText(object):
                     candidate.text.lower()
                 )
                 if (
-                    nationality_match and
-                    nationality_match.place.population >= min_population
+                    nationality_match
+                    and nationality_match.place.population >= min_population
                 ):
                     nationalities.add(nationality_match.place)
                     candidate.mark_as_location()
@@ -192,8 +191,8 @@ class GeoText(object):
                 candidate.text
             )
             if (
-                country_abbrev_match and
-                country_abbrev_match.place.population >= min_population
+                country_abbrev_match
+                and country_abbrev_match.place.population >= min_population
             ):
                 countries.add(country_abbrev_match.place)
                 candidate.mark_as_location()
@@ -211,8 +210,8 @@ class GeoText(object):
                 self._geodb.state_db.search(candidate.text.lower())
             )
             if (
-                state_match and
-                state_match.country.population >= min_population
+                state_match
+                and state_match.country.population >= min_population
             ):
                 states.add(state_match)
                 candidate.mark_as_location()

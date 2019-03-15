@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from geotext import GeoText
+from .geo import GeoText
 
 __author__ = 'Denis Kovalev'
 __email__ = 'aikikode@gmail.com'
-__version__ = '0.3.0'
+__version__ = '0.4.0'

@@ -2,9 +2,7 @@
 
 
 class Candidate(object):
-    """
-    Location candidate to review and search location DB for
-    """
+    """ Location candidate to review and search location DB for """
     def __init__(self, text):
         self.text = text
         self.parents = set()
@@ -20,7 +18,7 @@ class Candidate(object):
         parent.children.add(self)
 
     def get_all_children(self):
-        result = self.children
+        result = self.children.copy()
         for child in self.children:
             result |= child.get_all_children()
         return result
@@ -39,8 +37,8 @@ class CandidateDB(object):
         """
         Build candidates tree
         Args:
-            text (str)  original text to search for locations mentions
-            max_phrase_len (int)  max chunk length to split text into when
+            text (str): original text to search for locations mentions
+            max_phrase_len (int): max chunk length to split text into when
                 creating location candidates
         """
         self.text = text
@@ -71,4 +69,3 @@ class CandidateDB(object):
 
     def __repr__(self):
         return '{}: "{}"'.format(type(self).__name__, self.text)
-

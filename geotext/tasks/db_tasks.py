@@ -28,8 +28,8 @@ NATIONALITIES_FILE = get_data_path('nationalities.txt')
 
 
 def _read_data_file(
-    filename, usecols=(0, 1), sep='\t', comment='#', encoding='utf-8',
-    population_field_num=None, filter_method=None
+    filename, usecols=(0, 1), sep='\t', comment='#', population_field_num=None,
+    filter_method=None
 ):
     """
     Parse data files from the data directory
@@ -38,44 +38,37 @@ def _read_data_file(
     Files format defined in GeoNames readme file:
     http://download.geonames.org/export/dump/readme.txt
 
-    Parameters
-    ----------
-    filename: string
-        Full path to file
+    Args:
+        filename (str): Full path to file
 
-    usecols: list of fields indexes to return, default [0, 1]
-        The first element will be used as a key in case of conflict so keep it
-        unique.
-        Defaults to the first two columns of `filename`.
+        usecols (list of int): list of fields indexes to return, default [0, 1]
+            The first element will be used as a key in case of conflict so keep
+            it unique. Defaults to the first two columns of `filename`.
 
-    sep : string, default '\t'
-        Field delimiter.
+        sep (str):  Field delimiter, defaults to '\t'.
 
-    comment : str, default '#'
-        Indicates remainder of line should not be parsed. If found at the
-        beginning of a line, the line will be ignored altogether. This
-        parameter must be a single character.
+        comment (str): default '#'
+            Indicates remainder of line should not be parsed. If found at the
+            beginning of a line, the line will be ignored altogether. This
+            parameter must be a single character.
 
-    encoding : string, default 'utf-8'
-        Encoding to use for UTF when reading/writing (ex. `utf-8`)
+        population_field_num (int): default None
+            If set: this should define the field with location population count
+            to use for conflicts resolution: if there're several locations with
+            same name, the one with larger population will be taken.
+            If set to None, only the last one will be taken.
 
-    population_field_num : int, default None
-        If set: this should define the field with location population count to
-        use for conflicts resolution: if there're several locations with same
-        name, the one with larger population will be taken.
-        If set to None, only the last one will be taken.
+        filter_method (method): default None
+            Only lines that pass this filter are used
+            Method receives one param: line split by defined separator into a
+            list
 
-    filter_method: method, default None
-        Only lines that pass this filter are used
-        Method receives one param: line split by defined separator into a list
-
-    Returns
-    -------
-    A list of tuples with specified fields of input file
+    Returns:
+        A list of tuples with specified fields of input file
     """
 
     d = dict()
-    with open(filename, 'rb') as f:
+    with open(filename, 'r') as f:
         location_population = dict()
         for line in f:
             if line.startswith(comment):
@@ -84,16 +77,14 @@ def _read_data_file(
             if filter_method and not filter_method(columns):
                 continue
             values = [
-                replace_non_ascii(columns[idx].decode(encoding).rstrip('\n'))
+                replace_non_ascii(columns[idx].rstrip('\n'))
                 for idx in usecols
-                ]
+            ]
             values[0] = fix_location_name(values[0])
             key = canonize_location_name(values[0])
 
             if population_field_num is not None:
-                population = int(
-                    columns[population_field_num].decode(encoding)
-                )
+                population = int(columns[population_field_num])
                 if key in d and location_population[key] > population:
                     continue
                 location_population[key] = population
@@ -197,4 +188,3 @@ def create_country_abbreviations_db(country_db):
             )
         )
     return country_abbreviations_db
-

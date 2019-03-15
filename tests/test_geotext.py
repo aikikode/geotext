@@ -98,7 +98,7 @@ def test_read(
         nationalities
     )
     assert {
-       (k._key, v) for k, v in geo_text.get_country_mentions().iteritems()
+        (k._key, v) for k, v in geo_text.get_country_mentions().items()
     } == set(country_mentions)
 
 

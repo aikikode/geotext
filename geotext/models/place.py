@@ -2,18 +2,17 @@
 
 
 class Place(object):
-    """
-    Geographic place
-    """
+    """ Geographic place """
     def __init__(self, key, name, search_field, population=None):
         """
-        :param key:  unique key that identifies this place in the database
-        :param name:  location name, e.g. "London", "France", "California" etc.
-        :param population:  int, people living there or None if unknown
-        :param search_field:  canonized location name that will be used to
-          search for this place, e.g. if name is "Washington, D.C.", then
-          search field may be "washington dc". This field depends on the text
-          processing algo you are using
+        Args:
+            key (str): unique key that identifies this place in the database
+            name (str): location name, e.g. "London", "France", "California"
+            search_field (str): canonized location name that will be used to
+                search for this place, e.g. if name is "Washington, D.C.", then
+                search field may be "washington dc". This field depends on the
+                text processing algo you are using
+            population (int): number of people living there or None if unknown
         """
         self._key = key
         self.name = name
@@ -25,9 +24,7 @@ class Place(object):
 
 
 class PlaceDB(object):
-    """
-    Geographic place database
-    """
+    """ Geographic place database """
     def __init__(self):
         self._objects_by_key = dict()
         self._objects_by_text = dict()
