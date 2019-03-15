@@ -52,12 +52,12 @@ Usage
         # ['New York']
         city = geo_text.results.cities[0]
         city.__dict__
-        # {'_key': 'London',
-        #  '_search_field': 'london',
-        #  'country': Country: United Kingdom,
-        #  'name': 'London',
-        #  'population': 7556900,
-        #  'state': State: England, United Kingdom}
+        # {'_key': 'New York',
+        #  'name': 'New York',
+        #  'population': 8175133,
+        #  '_search_field': 'new york',
+        #  'state': State: New York, United States,
+        #  'country': Country: United States}
         [country.name for country in geo_text.results.countries]
         # ['France']
         geo_text.get_country_mentions()
