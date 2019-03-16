@@ -4,7 +4,7 @@ geotext
 
 GeoText extracts countries, nationalities, states and cities mentions from text.
 
-It gets a block of text as input and produces a tuple of `Place` objects as a result respresenting detected countries, nationalities, states and cities.
+It gets a block of text as input and produces a tuple of `Place` objects as a result representing detected countries, nationalities, states and cities.
 
 Each `Place` object has the following fields:
 
